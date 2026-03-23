@@ -10,53 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoConvexRouteImport } from './routes/demo/convex'
-import { Route as DemoAuthRouteImport } from './routes/demo/auth'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoConvexRoute = DemoConvexRouteImport.update({
-  id: '/demo/convex',
-  path: '/demo/convex',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoAuthRoute = DemoAuthRouteImport.update({
-  id: '/demo/auth',
-  path: '/demo/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demo/auth': typeof DemoAuthRoute
-  '/demo/convex': typeof DemoConvexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/auth': typeof DemoAuthRoute
-  '/demo/convex': typeof DemoConvexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/demo/auth': typeof DemoAuthRoute
-  '/demo/convex': typeof DemoConvexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo/auth' | '/demo/convex'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo/auth' | '/demo/convex'
-  id: '__root__' | '/' | '/demo/auth' | '/demo/convex'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemoAuthRoute: typeof DemoAuthRoute
-  DemoConvexRoute: typeof DemoConvexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,27 +48,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/convex': {
-      id: '/demo/convex'
-      path: '/demo/convex'
-      fullPath: '/demo/convex'
-      preLoaderRoute: typeof DemoConvexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/auth': {
-      id: '/demo/auth'
-      path: '/demo/auth'
-      fullPath: '/demo/auth'
-      preLoaderRoute: typeof DemoAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemoAuthRoute: DemoAuthRoute,
-  DemoConvexRoute: DemoConvexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
