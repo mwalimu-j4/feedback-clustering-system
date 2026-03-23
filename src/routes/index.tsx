@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useAction } from 'convex/react'
 import type { FunctionReference } from 'convex/server'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,43 @@ const prioritizeFeedbacksRef =
     { feedbacks: string[] },
     PrioritizedFeedback
   >
+
+function AutoResizeTextarea({
+  value,
+  onChange,
+  placeholder,
+  minRows = 3,
+  id,
+}: {
+  value: string
+  onChange: (value: string) => void
+  placeholder: string
+  minRows?: number
+  id?: string
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
+  useLayoutEffect(() => {
+    const element = textareaRef.current
+    if (!element) {
+      return
+    }
+    element.style.height = '0px'
+    element.style.height = `${element.scrollHeight}px`
+  }, [value])
+
+  return (
+    <textarea
+      id={id}
+      ref={textareaRef}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      rows={minRows}
+      className="w-full resize-none overflow-hidden rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+    />
+  )
+}
 
 function App() {
   const [mode, setMode] = useState<'categorize' | 'cluster'>('categorize')
@@ -143,70 +180,71 @@ function App() {
   }
 
   return (
-    <main className="relative min-h-[calc(100dvh-72px)] overflow-hidden bg-[radial-gradient(circle_at_15%_20%,#f59e0b_0%,transparent_38%),radial-gradient(circle_at_80%_10%,#0ea5e9_0%,transparent_35%),linear-gradient(165deg,#f8fafc_0%,#fff7ed_45%,#ecfeff_100%)] px-4 py-10 sm:px-6 lg:px-12">
-      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-amber-400/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-24 h-80 w-80 rounded-full bg-cyan-400/20 blur-3xl" />
-
-      <section className="mx-auto max-w-5xl rounded-3xl border border-white/60 bg-white/75 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.18)] backdrop-blur-sm sm:p-8">
-        <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-700">
-            AI Feedback Console
+    <main className="min-h-[100dvh] bg-slate-100 px-3 py-4 sm:px-6 sm:py-8">
+      <section className="mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="mb-5 space-y-2 sm:mb-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700">
+            Feedback Pilot System
           </p>
-          <h1 className="mt-3 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
-            Categorize one note or cluster many feedback entries
+          <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl">
+            Sort customer feedback in seconds
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-slate-700 sm:text-base">
-            Pick a mode, paste feedback, and run AI analysis. Categorization is
-            for one feedback item, while clustering processes a list and returns
-            grouped priorities.
+          <p className="text-sm text-slate-600 sm:text-base">
+            Choose one mode below. Use Categorize for one message, or Cluster to
+            group several messages by priority.
           </p>
         </div>
 
-        <div className="mb-8 grid gap-3 sm:grid-cols-2">
+        <div className="mb-5 grid grid-cols-2 gap-2 sm:mb-6 sm:gap-3">
           <button
             type="button"
             onClick={() => onModeSwitch('categorize')}
-            className={`rounded-2xl border px-5 py-4 text-left transition ${
+            className={`rounded-xl border px-3 py-3 text-left transition sm:px-5 sm:py-4 ${
               mode === 'categorize'
-                ? 'border-cyan-500 bg-cyan-50 shadow-sm'
-                : 'border-slate-200 bg-white hover:border-cyan-300'
+                ? 'border-sky-500 bg-sky-50 shadow-sm'
+                : 'border-slate-200 bg-white hover:border-sky-300'
             }`}
           >
-            <p className="text-base font-semibold text-slate-900">Categorize</p>
-            <p className="mt-1 text-sm text-slate-600">One feedback string</p>
+            <p className="text-sm font-semibold text-slate-900 sm:text-base">
+              Categorize
+            </p>
+            <p className="mt-1 text-xs text-slate-600 sm:text-sm">
+              One feedback message
+            </p>
           </button>
 
           <button
             type="button"
             onClick={() => onModeSwitch('cluster')}
-            className={`rounded-2xl border px-5 py-4 text-left transition ${
+            className={`rounded-xl border px-3 py-3 text-left transition sm:px-5 sm:py-4 ${
               mode === 'cluster'
-                ? 'border-cyan-500 bg-cyan-50 shadow-sm'
-                : 'border-slate-200 bg-white hover:border-cyan-300'
+                ? 'border-sky-500 bg-sky-50 shadow-sm'
+                : 'border-slate-200 bg-white hover:border-sky-300'
             }`}
           >
-            <p className="text-base font-semibold text-slate-900">Cluster</p>
-            <p className="mt-1 text-sm text-slate-600">
-              Multiple feedback entries
+            <p className="text-sm font-semibold text-slate-900 sm:text-base">
+              Cluster
+            </p>
+            <p className="mt-1 text-xs text-slate-600 sm:text-sm">
+              Multiple feedback messages
             </p>
           </button>
         </div>
 
         {mode === 'categorize' ? (
-          <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+          <section className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:space-y-4 sm:p-5">
             <label
               htmlFor="single-feedback"
               className="block text-sm font-medium text-slate-700"
             >
-              Feedback
+              Your feedback
             </label>
-            <textarea
+            <AutoResizeTextarea
               id="single-feedback"
               value={singleFeedback}
-              onChange={(event) => setSingleFeedback(event.target.value)}
-              placeholder="Example: Login takes too long after clicking sign in."
-              rows={5}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200"
+              onChange={setSingleFeedback}
+              placeholder="Type a feedback message, like: Login is slow after I click sign in."
+              minRows={4}
             />
 
             <Button
@@ -215,13 +253,15 @@ function App() {
               className="w-full sm:w-auto"
             >
               <LoadingSwap isLoading={isSubmitting}>
-                Categorize Feedback
+                Analyze Message
               </LoadingSwap>
             </Button>
 
             {categoryResult ? (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-700">Result</p>
+              <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+                <p className="text-sm font-medium text-slate-700">
+                  Suggested priority
+                </p>
                 <p
                   className={`mt-2 inline-flex rounded-full px-3 py-1 text-sm font-semibold capitalize ${categoryStyles[categoryResult]}`}
                 >
@@ -231,26 +271,28 @@ function App() {
             ) : null}
           </section>
         ) : (
-          <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-medium text-slate-700">Feedback List</p>
+          <section className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:space-y-4 sm:p-5">
+            <p className="text-sm font-medium text-slate-700">
+              Feedback messages
+            </p>
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {multiFeedbacks.map((feedback, index) => (
-                <div key={index} className="flex flex-col gap-2 sm:flex-row">
-                  <textarea
+                <div
+                  key={index}
+                  className="flex flex-col gap-2 sm:flex-row sm:items-start"
+                >
+                  <AutoResizeTextarea
                     value={feedback}
-                    onChange={(event) =>
-                      onUpdateFeedback(index, event.target.value)
-                    }
+                    onChange={(value) => onUpdateFeedback(index, value)}
                     placeholder={`Feedback #${index + 1}`}
-                    rows={3}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200"
+                    minRows={3}
                   />
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => onRemoveFeedback(index)}
-                    className="sm:self-start"
+                    className="w-full sm:w-auto"
                   >
                     Remove
                   </Button>
@@ -258,7 +300,7 @@ function App() {
               ))}
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Button type="button" variant="secondary" onClick={onAddFeedback}>
                 Another Feedback
               </Button>
@@ -274,7 +316,7 @@ function App() {
             </div>
 
             {clusterResult ? (
-              <div className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-3">
+              <div className="grid gap-3 rounded-xl border border-slate-200 bg-white p-3 sm:grid-cols-3 sm:gap-4 sm:p-4">
                 <div>
                   <p className="text-sm font-semibold text-rose-700">
                     Critical
@@ -282,10 +324,10 @@ function App() {
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {clusterResult.critical.length ? (
                       clusterResult.critical.map((item, index) => (
-                        <li key={`critical-${index}`}>- {item}</li>
+                        <li key={`critical-${index}`}>• {item}</li>
                       ))
                     ) : (
-                      <li>- none</li>
+                      <li>• No items yet</li>
                     )}
                   </ul>
                 </div>
@@ -294,10 +336,10 @@ function App() {
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {clusterResult.medium.length ? (
                       clusterResult.medium.map((item, index) => (
-                        <li key={`medium-${index}`}>- {item}</li>
+                        <li key={`medium-${index}`}>• {item}</li>
                       ))
                     ) : (
-                      <li>- none</li>
+                      <li>• No items yet</li>
                     )}
                   </ul>
                 </div>
@@ -306,10 +348,10 @@ function App() {
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {clusterResult.low.length ? (
                       clusterResult.low.map((item, index) => (
-                        <li key={`low-${index}`}>- {item}</li>
+                        <li key={`low-${index}`}>• {item}</li>
                       ))
                     ) : (
-                      <li>- none</li>
+                      <li>• No items yet</li>
                     )}
                   </ul>
                 </div>
@@ -319,7 +361,7 @@ function App() {
         )}
 
         {errorMessage ? (
-          <p className="mt-5 rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          <p className="mt-4 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-sm text-rose-700 sm:mt-5 sm:px-4 sm:py-3">
             {errorMessage}
           </p>
         ) : null}
