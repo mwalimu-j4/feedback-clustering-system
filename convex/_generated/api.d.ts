@@ -8,9 +8,12 @@
  * @module
  */
 
-import type * as auth from "../auth.js";
+import type * as askAI from "../askAI.js";
+import type * as doCategorize from "../doCategorize.js";
+import type * as doCluster from "../doCluster.js";
+import type * as env from "../env.js";
+import type * as feedbackAiHelpers from "../feedbackAiHelpers.js";
 import type * as http from "../http.js";
-import type * as todos from "../todos.js";
 
 import type {
   ApiFromModules,
@@ -19,9 +22,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
-  auth: typeof auth;
+  askAI: typeof askAI;
+  doCategorize: typeof doCategorize;
+  doCluster: typeof doCluster;
+  env: typeof env;
+  feedbackAiHelpers: typeof feedbackAiHelpers;
   http: typeof http;
-  todos: typeof todos;
 }>;
 
 /**

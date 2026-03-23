@@ -1,4 +1,4 @@
-import { mutation } from './_generated/server'
+import { action } from './_generated/server'
 import { v } from 'convex/values'
 import {
   buildCategoryPrompt,
@@ -7,13 +7,13 @@ import {
 } from './feedbackAiHelpers'
 import { askAI } from './askAI'
 
-export const categorizeFeedback = mutation({
+export const categorizeFeedback = action({
   args: {
     feedback: v.string(),
   },
   handler: async (_ctx, args): Promise<Category> => {
     const prompt = buildCategoryPrompt(args.feedback)
-    const aiResponse = await Promise.resolve(askAI(prompt))
+    const aiResponse = await askAI(prompt)
     return parseCategoryFromAIResponse(aiResponse)
   },
 })

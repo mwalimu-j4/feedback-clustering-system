@@ -1,4 +1,4 @@
-import { mutation } from './_generated/server'
+import { action } from './_generated/server'
 import { v } from 'convex/values'
 import {
   buildPrioritiesPrompt,
@@ -7,7 +7,7 @@ import {
 } from './feedbackAiHelpers'
 import { askAI } from './askAI'
 
-export const prioritizeFeedbacks = mutation({
+export const prioritizeFeedbacks = action({
   args: {
     feedbacks: v.array(v.string()),
   },
@@ -18,7 +18,7 @@ export const prioritizeFeedbacks = mutation({
 
     const prompt = buildPrioritiesPrompt(args.feedbacks)
 
-    const aiResponse = await Promise.resolve(askAI(prompt))
+    const aiResponse = await askAI(prompt)
     return parsePrioritiesFromAIResponse(aiResponse)
   },
 })
