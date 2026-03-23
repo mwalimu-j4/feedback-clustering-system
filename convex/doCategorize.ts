@@ -2,9 +2,9 @@ import { action } from './_generated/server'
 import { v } from 'convex/values'
 import {
   buildCategoryPrompt,
-  Category,
   parseCategoryFromAIResponse,
 } from './feedbackAiHelpers'
+import type { Category } from './feedbackAiHelpers'
 import { askAI } from './askAI'
 
 export const categorizeFeedback = action({
