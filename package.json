@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "vite build && tsc",
+    "vercel-build": "npx convex deploy --cmd 'pnpm build'",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
